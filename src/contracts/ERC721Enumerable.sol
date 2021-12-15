@@ -51,11 +51,24 @@ contract ERC721Enumerable is ERC721 {
         super.mint(_to, _tokenId);
         // a. Add tokens to the owner.
         // b. Add tokens to the total supply.
-        addTokenToTotalSupply(_tokenId);
+        addTokenToAllTokenEnumeration(_tokenId);
+        addTokensToOwnerEnumeration(_to, _tokenId);
     }
 
-    /// Add tokens to the total supply
-    function addTokenToTotalSupply(uint256 _tokenId) private {
+    /// Add the token to all tokens enumetation and allTokensIndex mapping
+    function addTokenToAllTokenEnumeration(uint256 _tokenId) private {
+        allTokensIndex[_tokenId] = allTokens.length;
         allTokens.push(_tokenId);
+    }
+
+    // Add the token to the list of tokens owned by the address
+    function addTokensToOwnerEnumeration(address _to, uint256 _tokenId)
+        private
+    {
+        // a. Add address and token ID to ownedTokens.
+        // b. Set ownedTokensIndex tokenId to adress of ownedToken position.
+        // c. We want to execute this function with minting.
+        ownedTokensIndex[_tokenId] = ownedTokens[_to].length;
+        ownedTokens[_to].push(_tokenId);
     }
 }
