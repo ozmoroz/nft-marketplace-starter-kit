@@ -1,0 +1,61 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "./ERC721.sol";
+
+/// @title ERC-721 Non-Fungible Token Standard, optional enumeration extension
+/// @dev See https://eips.ethereum.org/EIPS/eip-721
+///  Note: the ERC-165 identifier for this interface is 0x780e9d63.
+/* is ERC721 */
+contract ERC721Enumerable is ERC721 {
+    /// Array of all tokens
+    uint256[] private allTokens;
+
+    /// Mapping of tokenId to the position in allTokens array
+    mapping(uint256 => uint256) private allTokensIndex;
+
+    /// Mapping of owner to the list of all token IDs
+    mapping(address => uint256[]) private ownedTokens;
+
+    /// Mapping of a token ID to the index of the owner token list
+    mapping(uint256 => uint256) private ownedTokensIndex;
+
+    /// @notice Count NFTs tracked by this contract
+    /// @return A count of valid NFTs tracked by this contract, where each one of
+    ///  them has an assigned and queryable owner not equal to the zero address
+    function totalSupply() external view returns (uint256) {
+        return allTokens.length;
+    }
+
+    /// @notice Enumerate valid NFTs
+    /// @dev Throws if `_index` >= `totalSupply()`.
+    /// @param _index A counter less than `totalSupply()`
+    /// @return The token identifier for the `_index`th NFT,
+    ///  (sort order not specified)
+    // function tokenByIndex(uint256 _index) external view returns (uint256);
+
+    /// @notice Enumerate NFTs assigned to an owner
+    /// @dev Throws if `_index` >= `balanceOf(_owner)` or if
+    ///  `_owner` is the zero address, representing invalid NFTs.
+    /// @param _owner An address where we are interested in NFTs owned by them
+    /// @param _index A counter less than `balanceOf(_owner)`
+    /// @return The token identifier for the `_index`th NFT assigned to `_owner`,
+    ///   (sort order not specified)
+    // function tokenOfOwnerByIndex(address _owner, uint256 _index)
+    //     external
+    //     view
+    //     returns (uint256);
+
+    /// Minting function. We override mint function from ERC721
+    function mint(address _to, uint256 _tokenId) internal override(ERC721) {
+        super.mint(_to, _tokenId);
+        // a. Add tokens to the owner.
+        // b. Add tokens to the total supply.
+        addTokenToTotalSupply(_tokenId);
+    }
+
+    /// Add tokens to the total supply
+    function addTokenToTotalSupply(uint256 _tokenId) private {
+        allTokens.push(_tokenId);
+    }
+}
