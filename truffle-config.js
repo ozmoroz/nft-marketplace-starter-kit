@@ -73,7 +73,7 @@ module.exports = {
     // }
 
     development: {
-      host: "172.21.16.1",
+      host: "SERGEY-AFTERSHOCK.mshome.net.",
       port: 7545,
       network_id: "*",
     },
