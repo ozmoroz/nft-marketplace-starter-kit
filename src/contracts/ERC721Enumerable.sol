@@ -23,7 +23,7 @@ contract ERC721Enumerable is ERC721 {
     /// @notice Count NFTs tracked by this contract
     /// @return A count of valid NFTs tracked by this contract, where each one of
     ///  them has an assigned and queryable owner not equal to the zero address
-    function totalSupply() external view returns (uint256) {
+    function totalSupply() public view returns (uint256) {
         return allTokens.length;
     }
 
@@ -32,7 +32,13 @@ contract ERC721Enumerable is ERC721 {
     /// @param _index A counter less than `totalSupply()`
     /// @return The token identifier for the `_index`th NFT,
     ///  (sort order not specified)
-    // function tokenByIndex(uint256 _index) external view returns (uint256);
+    function tokenByIndex(uint256 _index) external view returns (uint256) {
+        require(
+            _index < totalSupply(),
+            "Error: Global supply index out of bounds"
+        );
+        return allTokens[_index];
+    }
 
     /// @notice Enumerate NFTs assigned to an owner
     /// @dev Throws if `_index` >= `balanceOf(_owner)` or if
@@ -41,10 +47,17 @@ contract ERC721Enumerable is ERC721 {
     /// @param _index A counter less than `balanceOf(_owner)`
     /// @return The token identifier for the `_index`th NFT assigned to `_owner`,
     ///   (sort order not specified)
-    // function tokenOfOwnerByIndex(address _owner, uint256 _index)
-    //     external
-    //     view
-    //     returns (uint256);
+    function tokenOfOwnerByIndex(address _owner, uint256 _index)
+        external
+        view
+        returns (uint256)
+    {
+        require(
+            _index < balanceOf(_owner),
+            "Error: The index of owned tokens is out of bounds"
+        );
+        return ownedTokens[_owner][_index];
+    }
 
     /// Minting function. We override mint function from ERC721
     function mint(address _to, uint256 _tokenId) internal override(ERC721) {
