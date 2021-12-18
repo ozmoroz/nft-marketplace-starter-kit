@@ -1,30 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./ERC165.sol";
+
+import "./interfaces/IERC721.sol";
+
 /// @title ERC-721 Non-Fungible Token Standard
 /// @dev See https://eips.ethereum.org/EIPS/eip-721
-contract ERC721 {
-    /// @dev This emits when ownership of any NFT changes by any mechanism.
-    ///  This event emits when NFTs are created (`from` == 0) and destroyed
-    ///  (`to` == 0). Exception: during contract creation, any number of NFTs
-    ///  may be created and assigned without emitting Transfer. At the time of
-    ///  any transfer, the approved address for that NFT (if any) is reset to none.
-    event Transfer(
-        address indexed _from,
-        address indexed _to,
-        uint256 indexed _tokenId
-    );
-
-    /// @dev This emits when the approved address for an NFT is changed or
-    ///  reaffirmed. The zero address indicates there is no approved address.
-    ///  When a Transfer event emits, this also indicates that the approved
-    ///  address for that NFT (if any) is reset to none.
-    event Approval(
-        address indexed _owner,
-        address indexed _approved,
-        uint256 indexed _tokenId
-    );
-
+contract ERC721 is ERC165, IERC721 {
     /// Mapping from token id to the owner
     mapping(uint256 => address) private tokenOwner;
 
@@ -39,7 +22,7 @@ contract ERC721 {
     ///  function throws for queries about the zero address.
     /// @param _owner An address for whom to query the balance
     /// @return The number of NFTs owned by `_owner`, possibly zero
-    function balanceOf(address _owner) public view returns (uint256) {
+    function balanceOf(address _owner) public view override returns (uint256) {
         require(_owner != address(0), "ERC721: Must be a valid address.");
         return ownedTokensCount[_owner];
     }
@@ -49,7 +32,7 @@ contract ERC721 {
     ///  about them do throw.
     /// @param _tokenId The identifier for an NFT
     /// @return The address of the owner of the NFT
-    function ownerOf(uint256 _tokenId) public view returns (address) {
+    function ownerOf(uint256 _tokenId) public view override returns (address) {
         address owner = tokenOwner[_tokenId];
         require(
             owner != address(0),
@@ -128,7 +111,7 @@ contract ERC721 {
         address _from,
         address _to,
         uint256 _tokenId
-    ) public {
+    ) external payable {
         require(isApprovedOrOwner(msg.sender, _tokenId));
         _transferFrom(_from, _to, _tokenId);
     }
