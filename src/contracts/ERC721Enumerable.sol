@@ -21,6 +21,16 @@ contract ERC721Enumerable is IERC721Enumerable, ERC721 {
     /// Mapping of a token ID to the index of the owner token list
     mapping(uint256 => uint256) private ownedTokensIndex;
 
+    constructor() {
+        registerInterface(
+            bytes4(
+                keccak256("totalSupply(bytes4)") ^
+                    keccak256("tokenByIndex(bytes4)") ^
+                    keccak256("tokenOfOwnerByIndex(bytes4)")
+            )
+        );
+    }
+
     /// @notice Count NFTs tracked by this contract
     /// @return A count of valid NFTs tracked by this contract, where each one of
     ///  them has an assigned and queryable owner not equal to the zero address
@@ -67,7 +77,11 @@ contract ERC721Enumerable is IERC721Enumerable, ERC721 {
     }
 
     /// Minting function. We override mint function from ERC721
-    function mint(address _to, uint256 _tokenId) internal override(ERC721) {
+    function mint(address _to, uint256 _tokenId)
+        internal
+        virtual
+        override(ERC721)
+    {
         super.mint(_to, _tokenId);
         // a. Add tokens to the owner.
         // b. Add tokens to the total supply.
