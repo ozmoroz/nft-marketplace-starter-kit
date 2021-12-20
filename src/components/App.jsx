@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Web3 from "web3";
 // import detectEthereumProvider from "@metamask/detect-provider";
-// import KryptoBird from "../abis/KryptoBird.json";
+import KryptoBird from "../abis/KryptoBird.json";
 
 class App extends Component {
   async componentDidMount() {
@@ -11,8 +11,6 @@ class App extends Component {
 
   // Detect an Etherium provider
   async loadWeb3() {
-    // const provider = await detectEthereumProvider();
-
     // Ref: https://medium.com/valist/how-to-connect-web3-js-to-metamask-in-2020-fee2b2edf58a
     if (window.ethereum) {
       console.log("Ethereum wallet is connected");
@@ -29,6 +27,25 @@ class App extends Component {
     const web3 = window.web3;
     const accounts = await web3.eth.getAccounts();
     this.setState({ account: accounts });
+
+    // Load the conract data
+    // Get the Ganache blockchain network ID
+    // const provider = await detectEthereumProvider();
+    const networkId = await web3.eth.net.getId();
+    const networkData = KryptoBird.networks[networkId];
+    if (networkData) {
+      // NOTE: The conract must already be deployed to the Blockchain.
+      // Then its abi contains its network Id and address.
+      // 1. Create a var abi set to KryptoBird abi.
+      // 2. Create a var address and set to to the network address.
+      // 3. Create a var contract which grabs a new instance of web3 eth contract.
+      // 4. Console log te var conrtract successfully.
+      const abi = KryptoBird;
+      const address = networkData.address;
+      const contract = new web3.eth.Contract([abi], address);
+      // console.log("Contract: ");
+      // console.log(contract);
+    }
   }
 
   constructor(props) {
