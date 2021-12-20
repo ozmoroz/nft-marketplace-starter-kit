@@ -43,4 +43,30 @@ contract("KryptoBird", (accounts) => {
       await contract.mint("https...1").should.be.rejected;
     });
   });
+
+  describe("indexing", async () => {
+    it("lists KryptoBirdz", async () => {
+      await contract.mint("https...2");
+      await contract.mint("https...3");
+      await contract.mint("https...4");
+
+      // console.log("contract");
+      // console.log(contract);
+
+      let result = [];
+      let kryptoBird;
+      const totalSupply = (await contract.totalSupply()).toNumber();
+      for (let i = 0; i < totalSupply; i++) {
+        kryptoBird = await contract.kryptoBirdz(i);
+        result.push(kryptoBird);
+      }
+      // assert that our new arrau result will equal our expected result
+      expect(result).to.have.same.members([
+        "https...1",
+        "https...2",
+        "https...3",
+        "https...4",
+      ]);
+    });
+  });
 });
