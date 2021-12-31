@@ -40,11 +40,26 @@ class App extends Component {
       // 2. Create a var address and set to to the network address.
       // 3. Create a var contract which grabs a new instance of web3 eth contract.
       // 4. Console log te var conrtract successfully.
-      const abi = KryptoBird;
+      const abi = KryptoBird.abi;
       const address = networkData.address;
-      const contract = new web3.eth.Contract([abi], address);
+      const contract = new web3.eth.Contract(abi, address);
+      this.setState({ contract });
       // console.log("Contract: ");
       // console.log(contract);
+
+      // call the total supply of our Krypto Birdz
+      const totalSupply = await contract.methods.totalSupply().call();
+      // console.log("Total Supply:");
+      // console.log(totalSupply);
+      this.setState({ totalSupply });
+      // Load KryptoBirdz
+      for (let i = 0; i < totalSupply; i++) {
+        const kryptoBird = await contract.methods.kryptoBirdz(i - 1).call();
+        console.log("kryptoBird");
+        console.log(kryptoBird);
+      }
+    } else {
+      window.alert("Error: Smart contract not deployed.");
     }
   }
 
@@ -52,6 +67,8 @@ class App extends Component {
     super(props);
     this.state = {
       account: "",
+      contract: null,
+      totalSupply: 0,
     };
   }
 
