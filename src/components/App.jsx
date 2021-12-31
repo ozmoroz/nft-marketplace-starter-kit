@@ -26,7 +26,9 @@ class App extends Component {
   async loadBlockchainData() {
     const web3 = window.web3;
     const accounts = await web3.eth.getAccounts();
-    this.setState({ account: accounts });
+    // console.log("accounts:");
+    // console.log(accounts);
+    this.setState({ account: accounts[0] });
 
     // Load the conract data
     // Get the Ganache blockchain network ID
@@ -48,20 +50,45 @@ class App extends Component {
       // console.log(contract);
 
       // call the total supply of our Krypto Birdz
-      const totalSupply = await contract.methods.totalSupply().call();
+      const totalSupply = parseInt(
+        await contract.methods.totalSupply().call(),
+        10
+      );
       // console.log("Total Supply:");
       // console.log(totalSupply);
       this.setState({ totalSupply });
       // Load KryptoBirdz
       for (let i = 0; i < totalSupply; i++) {
-        const kryptoBird = await contract.methods.kryptoBirdz(i - 1).call();
-        console.log("kryptoBird");
-        console.log(kryptoBird);
+        const kryptoBird = await contract.methods.kryptoBirdz(i).call();
+        this.setState((state) => ({
+          ...state,
+          kryptoBirdz: [...state.kryptoBirdz, kryptoBird],
+        }));
+        // console.log("kryptoBird");
+        // console.log(kryptoBird);
       }
     } else {
       window.alert("Error: Smart contract not deployed.");
     }
   }
+
+  /** Minting function.
+   *  With minting, we are seding information. And we need to specify the account.
+   */
+  mint = (kryptoBird) => {
+    // console.log("Minting kryptobird: ");
+    // console.log(kryptoBird);
+    this.state.contract.methods
+      .mint(kryptoBird)
+      .send({ from: this.state.account });
+    this.state.contract.once("Transfer", (receipt) => {
+      this.setState((state) => ({
+        ...state,
+        kryptoBirdz: [...state.kryptoBirdz, kryptoBird],
+        totalSupply: state.totalSupply + 1,
+      }));
+    });
+  };
 
   constructor(props) {
     super(props);
@@ -69,7 +96,9 @@ class App extends Component {
       account: "",
       contract: null,
       totalSupply: 0,
+      kryptoBirdz: [],
     };
+    this.kryptoBirdInput = React.createRef();
   }
 
   render() {
@@ -88,6 +117,46 @@ class App extends Component {
             </li>
           </ul>
         </nav>
+
+        <div className="container-fluid mt-1">
+          <div className="row">
+            <main rols="main" className="col-lg-12 d-flex text-center">
+              <div
+                className="content mr-auto ml-auto"
+                style={{ opacity: "0.8" }}
+              >
+                <h1 style={{ color: "white" }}>
+                  KryptoBirdz - NFT marketplace
+                </h1>
+                <form
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    this.mint(this.kryptoBirdInput.current.value);
+                  }}
+                >
+                  <input
+                    type="text"
+                    placeholder="Add a file location"
+                    className="form-control mb-1"
+                    ref={this.kryptoBirdInput}
+                  ></input>
+                  <input
+                    type="submit"
+                    className="btn btn-primary btn-black"
+                    style={{ margin: "6px" }}
+                    value="MINT"
+                  ></input>
+                </form>
+                <div>Minted tokens:</div>
+                <div>
+                  {this.state.kryptoBirdz.map((bird) => (
+                    <div key={bird}>{bird}</div>
+                  ))}
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
       </div>
     );
   }
