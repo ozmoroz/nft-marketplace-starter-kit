@@ -1,6 +1,13 @@
 import React, { Component } from "react";
 import Web3 from "web3";
-// import detectEthereumProvider from "@metamask/detect-provider";
+import {
+  MDBCard,
+  MDBCardBody,
+  MDBCardTitle,
+  MDBCardText,
+  MDBCardImage,
+  MDBBtn,
+} from "mdb-react-ui-kit";
 import KryptoBird from "../abis/KryptoBird.json";
 
 class App extends Component {
@@ -155,6 +162,31 @@ class App extends Component {
                 </div>
               </div>
             </main>
+          </div>
+          <hr />
+          <div className="row text-center">
+            {this.state.kryptoBirdz.map((bird) => (
+              <div key={bird}>
+                <div>
+                  <MDBCard className="token img" style={{ maxWidth: "22rem" }}>
+                    <MDBCardImage
+                      src={bird}
+                      position="top"
+                      style={{ marginRight: "4px" }}
+                    />
+                    <MDBCardBody>
+                      <MDBCardTitle>KryptoBirdz</MDBCardTitle>
+                      <MDBCardText>
+                        The KryptoBirdz are 20 uniquely generated KBirdz from
+                        cyberpunk galaxy Mystopia! There is only one of each
+                        bird which can only be owned by a single person. {bird}
+                      </MDBCardText>
+                      <MDBBtn href={bird}>Download</MDBBtn>
+                    </MDBCardBody>
+                  </MDBCard>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
