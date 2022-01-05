@@ -9208,12 +9208,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x372b9c38F8a32E229705D8c64FDb4AbB684C6e50",
-      "transactionHash": "0xe42db8032ea794d18117be118cfe59a2647fa50474a2ca8bbd2fd27701a53d78"
+      "address": "0x65E84054dea34E524E9AEdd3A6999A2799d5EC77",
+      "transactionHash": "0x3b0d90b3f0dba9bafe1a0821907f7d4259a0f5fe84dd504d68c2a834e8e8676b"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-12-31T07:13:54.515Z",
+  "updatedAt": "2022-01-05T04:20:18.773Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
