@@ -2,17 +2,19 @@
 pragma solidity ^0.8.0;
 
 import "./ERC165.sol";
-
 import "./interfaces/IERC721.sol";
+import "./libraries/Counters.sol";
 
 /// @title ERC-721 Non-Fungible Token Standard
 /// @dev See https://eips.ethereum.org/EIPS/eip-721
 contract ERC721 is ERC165, IERC721 {
+    using SafeMath for uint256;
+    using Counters for Counters.Counter;
     /// Mapping from token id to the owner
     mapping(uint256 => address) private tokenOwner;
 
     /// Mapping from owner to number of owned tokens;
-    mapping(address => uint256) private ownedTokensCount;
+    mapping(address => Counters.Counter) private ownedTokensCount;
 
     /// Maping of tokens to approved addresses
     mapping(uint256 => address) private tokenApprovals;
@@ -34,7 +36,7 @@ contract ERC721 is ERC165, IERC721 {
     /// @return The number of NFTs owned by `_owner`, possibly zero
     function balanceOf(address _owner) public view override returns (uint256) {
         require(_owner != address(0), "ERC721: Must be a valid address.");
-        return ownedTokensCount[_owner];
+        return ownedTokensCount[_owner].current();
     }
 
     /// @notice Find the owner of an NFT
@@ -77,7 +79,7 @@ contract ERC721 is ERC165, IERC721 {
         );
 
         tokenOwner[_tokenId] = _to;
-        ownedTokensCount[_to] += 1;
+        ownedTokensCount[_to].increment();
 
         // Emit ERC721 Transfer event
         // Ref: https://eips.ethereum.org/EIPS/eip-721
@@ -99,8 +101,8 @@ contract ERC721 is ERC165, IERC721 {
             "Trying to transfer a token the address does not own!"
         );
 
-        ownedTokensCount[_from]--;
-        ownedTokensCount[_to]++;
+        ownedTokensCount[_from].decrement();
+        ownedTokensCount[_to].increment();
 
         tokenOwner[_tokenId] = _to;
 
